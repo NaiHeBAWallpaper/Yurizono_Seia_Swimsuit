@@ -217,7 +217,8 @@
 	"tags" : [ "Anime" ],
 	"title" : "Blue Archive | Yurizono Seia (Swimsuit)",
 	"type" : "web",
-	"version" : 2,
+	"version" : 3,
+	"visibility" : "public",
 	"workshopid" : "3531814034",
 	"workshopurl" : "steam://url/CommunityFilePage/3531814034"
 }

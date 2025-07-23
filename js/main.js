@@ -41,16 +41,16 @@ const AUDIO_DETAIL = [
 		startTimes: [1600, 9400],
 		dialog: {
 			Japanese: [
-				"いい風だ…やはり、心なしか涼やかに感じられる。",
-				"邪魔する者はなく、この世界は私たちだけのものだ。"
+				"良い風だ。やはり、心なしか涼やかに感じられる。",
+				"邪魔するものはなく……この世界は私たちだけのものだ。"
 			],
 			English: [
 				"What a nice breeze... Indeed, it somehow feels more refreshing here.",
-				"There's no one here to bother us. This world belongs only to the two of us."
+				"There's no one here to bother us... This world belongs only to the two of us."
 			],
 			Chinese: [
-				"微风真舒服……果然，感觉凉快了一些。",
-				"不会有人来打扰，这个世界只属于我们两个人。"
+				"微风真舒服。果然，感觉凉快了一些。",
+				"不会有人来打扰……这个世界只属于我们两个人。"
 			]
 		}
 	},
@@ -60,16 +60,16 @@ const AUDIO_DETAIL = [
 		startTimes: [1200, 5700],
 		dialog: {
 			Japanese: [
-				"助手席からの眺めは美しいかな。",
-				"その表情は…景色に驚いているのかい。それとも、私の誘いが意外だったのかな。"
+				"助手席からの眺めは美しいかな？",
+				"その表情は……景色に驚いているのかい？それとも……私の誘いが意外だったのかな？"
 			],
 			English: [
 				"The view from the passenger seat is beautiful, isn't it?",
-				"That expression on your face... Are you surprised by the view? Or perhaps, did you find my invitation unexpected?"
+				"That expression on your face... Are you surprised by the view? Or perhaps... did you find my invitation unexpected?"
 			],
 			Chinese: [
 				"从副驾驶座看出去的风景，很美吧？",
-				"你这副表情… 是被景色惊艳到了吗？还是说，我的邀请让你很意外呢？"
+				"你这副表情… 是被景色惊艳到了吗？还是说……我的邀请让你很意外呢？"
 			]
 		}
 	},
@@ -79,16 +79,16 @@ const AUDIO_DETAIL = [
 		startTimes: [1400, 12800],
 		dialog: {
 			Japanese: [
-				"どちらにせよ、その顔を拝めただけで満足だ。こうして誘った会があったというものだね。",
-				"大それた理由を求められても困ってしまうな、気の向くままにそれだけのことさ。"
+				"どちらにせよ、その顔を拝めただけで満足だ。こうして誘った甲斐があったというものだね。",
+				"大それた理由を求められても困ってしまうな。気の向くままに……それだけのことさ。"
 			],
 			English: [
 				"Either way, just seeing that look on your face is enough to make me content. It makes inviting you out completely worth it, don't you think?",
-				"I'd be troubled if you asked for some profound reason. It was just a whim, that's all there is to it."
+				"I don't know what the big reason is, but I just do what I feel like doing... that's all."
 			],
 			Chinese: [
 				"无论如何，光是能看到你那样的表情，我就已经心满意足了。这么看来，这次能邀请你出来真是太好了呢。",
-				"你要是问我什么特别的理由，我还真有点伤脑筋呢。我不过是一时兴起罢了。"
+				"我不知道主要原因是什么，但我只是做我想做的事……仅此而已。"
 			]
 		}
 	},
@@ -98,16 +98,16 @@ const AUDIO_DETAIL = [
 		startTimes: [800, 8000],
 		dialog: {
 			Japanese: [
-				"こういうのを、なんと言ったかね…ふぅ…",
-				"逃避行?"
+				"こういうのを、何と言ったかね……",
+				"ふむ……逃避行？"
 			],
 			English: [
-				"What was the word for this again... sigh...",
-				"An escape trip?"
+				"What was the word for this again...",
+				"Hmm...An escape trip?"
 			],
 			Chinese: [
-				"该怎么说这种感觉呢…呼…",
-				"逃亡之旅？"
+				"该怎么说这种感觉呢……",
+				"嗯……逃亡之旅？"
 			]
 		}
 	},
@@ -117,19 +117,19 @@ const AUDIO_DETAIL = [
 		startTimes: [500, 4000, 11600],
 		dialog: {
 			Japanese: [
-				"…冗談さ。",
-				"けれど、まだしばらくは…そうだな。",
-				"君を帰すまでは、この戯れに付き合ってもらうとしようか。"
+				"ふふ……冗談さ。",
+				"けれど、まだしばらくは……そうだな。",
+				"君を送り返すまでは、この「戯れ」に付き合ってもらうとしようか。"
 			],
 			English: [
-				"...I'm just kidding.",
-				"But, for just a little while longer... Yes.",
-				"Until it's time for me to send you back... I suppose I'll have you play along with this little game of mine."
+				"Hehe...just kidding.",
+				"But... it'll probably be a while yet.",
+				`Until I send you back, I guess you'll have to put up with this "play."`
 			],
 			Chinese: [
-				"……我只是在开玩笑。",
-				"不过，至少暂时…嗯，就这样吧。",
-				"在送你回去之前……就请你再奉陪我一下，玩完这场小小的游戏吧。"
+				"呵呵……开玩笑的。",
+				"但可能……还需要一段时间。",
+				"在我送你回去之前，我想你得忍受这场“戏”。"
 			]
 		}
 	}
