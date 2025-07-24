@@ -49,8 +49,8 @@ const AUDIO_DETAIL = [
 				"There's no one here to bother us... This world belongs only to the two of us."
 			],
 			Chinese: [
-				"微风真舒服。果然，感觉凉快了一些。",
-				"不会有人来打扰……这个世界只属于我们两个人。"
+				"真是舒爽的风啊。果然，莫名觉得心旷神怡呢。",
+				"没有碍事的人打扰……此刻的世界只属于我们。"
 			]
 		}
 	},
@@ -68,8 +68,8 @@ const AUDIO_DETAIL = [
 				"That expression on your face... Are you surprised by the view? Or perhaps... did you find my invitation unexpected?"
 			],
 			Chinese: [
-				"从副驾驶座看出去的风景，很美吧？",
-				"你这副表情… 是被景色惊艳到了吗？还是说……我的邀请让你很意外呢？"
+				"副驾驶座的风景可还称心？",
+				"你这样的表情……是惊叹于窗外景致？还是说……没料到我会邀你同行？"
 			]
 		}
 	},
@@ -87,8 +87,8 @@ const AUDIO_DETAIL = [
 				"I don't know what the big reason is, but I just do what I feel like doing... that's all."
 			],
 			Chinese: [
-				"无论如何，光是能看到你那样的表情，我就已经心满意足了。这么看来，这次能邀请你出来真是太好了呢。",
-				"我不知道主要原因是什么，但我只是做我想做的事……仅此而已。"
+				"无论怎么想都无妨，能看到你这般神情我已经心满意足了。看来这番邀约确实值得呢。",
+				"若非要追问缘由，反倒让我为难了……不过是随心所欲罢了。"
 			]
 		}
 	},
@@ -106,8 +106,8 @@ const AUDIO_DETAIL = [
 				"Hmm...An escape trip?"
 			],
 			Chinese: [
-				"该怎么说这种感觉呢……",
-				"嗯……逃亡之旅？"
+				"该称这叫作什么呢……",
+				"嗯……私奔吗？"
 			]
 		}
 	},
@@ -127,9 +127,9 @@ const AUDIO_DETAIL = [
 				`Until I send you back, I guess you'll have to put up with this "play."`
 			],
 			Chinese: [
-				"呵呵……开玩笑的。",
-				"但可能……还需要一段时间。",
-				"在我送你回去之前，我想你得忍受这场“戏”。"
+				"呵呵……玩笑罢了。",
+				"不过在那之前......",
+				"就请容我继续这场小小的‘游戏’吧……至少，在送你回去之前。"
 			]
 		}
 	}
