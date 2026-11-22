@@ -2,6 +2,11 @@ let canvas, textbox, gl, shader, batcher, assetManager, skeletonRenderer;
 let mvp = new spine.Matrix4();
 
 let lastFrameTime;
+let initialLoadTimer;
+let modelFrame;
+let renderFrame;
+let renderTimer;
+let loadingResolution;
 let spineData;
 
 let customScale = 1;
@@ -11,15 +16,19 @@ let bgmvolume = 0;
 let bgm;
 let bufferColor = [0.3, 0.3, 0.3];
 
-let introAnimation, acceptingClick;
+let introAnimation, introLoop = false, introLoopDelay = 60, acceptingClick;
+let introLoopTimer = null;
 let dialogBox = false;
 let currentVoiceline = 1;
 let mouseSelect = -1;
 let trackerID = -1;
 let untrackerID = -1;
-let unpetID = -1;
-let PPointX, PPointY, EPointX, EPointY;
+let EPointX, EPointY;
 let TPoint, TEye;
+let headpatOrigin;
+let headpatCooldown = 0;
+const headpatTarget = new spine.Vector2();
+const headpatOffset = new spine.Vector2();
 let flipped = false;
 
 let transpose = 1;
@@ -30,8 +39,6 @@ window.selectedLanguage = 'Japanese'; // 全局语言变量（挂载到window对
 const CHARACTER = 'CH0295';
 // 默认模型分辨率为2K
 let modelResolution = '8k';
-const BINARY_PATH = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.skel`) : `../assets/${modelResolution}/${CHARACTER}_home.skel`;
-const ATLAS_PATH = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.atlas`) : `../assets/${modelResolution}/${CHARACTER}_home.atlas`;
 const HAS_A = { eye: false, point: true };
 
 // All voicelines are manually timed for start point and duration. This may not be the most optimized solution, but works for all intents and purposes.
@@ -145,9 +152,11 @@ const HITBOX = {
 
 const INTRO_TIMEOUT = 19500;
 const HEADPAT_CLAMP = 30;
+const HEADPAT_DRAG_SCALE = 0.35;
+const HEADPAT_FOLLOW_TIME = 0.055;
+const HEADPAT_RETURN_TIME = 0.08;
 const EYE_CLAMP_X = 200;
 const EYE_CLAMP_Y = EYE_CLAMP_X * (9 / 16);
-const HEADPAT_STEP = 5;
 const EYE_STEP = 10;
 
 let mousePos = { x: 0, y: 0 };
@@ -188,22 +197,22 @@ function untrackMouse() {
 	if (TEye.x < EPointX) TEye.x += EYE_STEP;
 }
 
-function unpet() {
-	if (Math.abs(TPoint.x - PPointX) <= HEADPAT_STEP && Math.abs(TPoint.y - PPointY) <= HEADPAT_STEP) {
-		if (unpetID != -1) {
-			TPoint.x = PPointX;
-			TPoint.y = PPointY;
-			clearInterval(unpetID);
-			unpetID = -1;
-			setTimeout(function () {
-				acceptingClick = true;
-			}, 500);
-		}
+function applyHeadpat(delta) {
+	const dx = headpatTarget.x - headpatOffset.x;
+	const dy = headpatTarget.y - headpatOffset.y;
+	if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) {
+		headpatOffset.set(headpatTarget.x, headpatTarget.y);
+	} else {
+		const blend = 1 - Math.exp(-delta / (headpatOrigin ? HEADPAT_FOLLOW_TIME : HEADPAT_RETURN_TIME));
+		headpatOffset.x += dx * blend;
+		headpatOffset.y += dy * blend;
 	}
-	if (TPoint.y > PPointY) TPoint.y -= HEADPAT_STEP;
-	if (TPoint.y < PPointY) TPoint.y += HEADPAT_STEP;
-	if (TPoint.x > PPointX) TPoint.x -= HEADPAT_STEP;
-	if (TPoint.x < PPointX) TPoint.x += HEADPAT_STEP;
+	TPoint.x += headpatOffset.x;
+	TPoint.y += headpatOffset.y;
+}
+
+function releaseHeadpatOnExit() {
+	if (headpatOrigin && spineData) releasedMouse();
 }
 
 function playVoiceline() {
@@ -265,6 +274,7 @@ function pressedMouse(x, y) {
 	if (tx > HITBOX.headpat.xMin && tx < HITBOX.headpat.xMax && ty > HITBOX.headpat.yMin && ty < HITBOX.headpat.yMax && mouseOptions.headpatting) {
 		spineData.state.setAnimation(1, 'Pat_01_M', false);
 		// if (HAS_A.point) spineData.state.setAnimation(2, 'Pat_02_M', false);
+		headpatOrigin = { x, y };
 		mouseSelect = 1;
 	}
 	else if (tx > HITBOX.voiceline.xMin && tx < HITBOX.voiceline.xMax && ty > HITBOX.voiceline.yMin && ty < HITBOX.voiceline.yMax && mouseOptions.voicelines) {
@@ -327,17 +337,23 @@ function drawHitboxes() {
 	ctx.restore();
 }
 
-function movedMouse(x, y, deltaX, deltaY) {
+function movedMouse(x, y) {
 	switch (mouseSelect) {
-		case 1:
-			// Motion: Clockwise
-			// if ((y < 800 && deltaY < 0) || (x >= 1440 && deltaX > 0)) {
-			// 	TPoint.y = clamp(TPoint.y - HEADPAT_STEP, PPointY - HEADPAT_CLAMP, PPointY + HEADPAT_CLAMP);
-			// }
-			// else if ((y >= 800 && deltaY > 0) || (x < 1440 && deltaX < 0)) {
-			// 	TPoint.y = clamp(TPoint.y + HEADPAT_STEP, PPointY - HEADPAT_CLAMP, PPointY + HEADPAT_CLAMP);
-			// }
+		case 1: {
+			const scale = HEADPAT_DRAG_SCALE * transpose / customScale;
+			const parent = TPoint.parent;
+			headpatTarget.set(
+				parent.worldX + (x - headpatOrigin.x) * scale,
+				parent.worldY + (headpatOrigin.y - y) * scale
+			);
+			parent.worldToLocal(headpatTarget);
+			const distance = headpatTarget.length();
+			if (distance > HEADPAT_CLAMP) {
+				headpatTarget.x *= HEADPAT_CLAMP / distance;
+				headpatTarget.y *= HEADPAT_CLAMP / distance;
+			}
 			break;
+		}
 		case 2:
 			mouseSelect = -1;
 			acceptingClick = true;
@@ -352,15 +368,20 @@ function movedMouse(x, y, deltaX, deltaY) {
 
 function releasedMouse() {
 	switch (mouseSelect) {
-		case 1:
-			if (unpetID == -1) {
-				unpetID = setInterval(unpet, 20);
-			}
-			spineData.state.setAnimation(1, 'Pat_01_M', false);
-			spineData.state.setAnimation(2, 'Pat_02_M', false);
-			spineData.state.addEmptyAnimation(1, 0.5, 0);
-			spineData.state.addEmptyAnimation(2, 0.5, 0);
+		case 1: {
+			headpatOrigin = null;
+			headpatTarget.set(0, 0);
+			const state = spineData.state;
+			const motion = state.setAnimation(1, 'Pat_01_M', false);
+			const expression = state.setAnimation(2, 'Pat_02_M', false);
+			state.addEmptyAnimation(1, 0.5, motion.animationEnd);
+			state.addEmptyAnimation(2, 0.5, expression.animationEnd);
+			headpatCooldown = setTimeout(() => {
+				headpatCooldown = 0;
+				acceptingClick = true;
+			}, 500);
 			break;
+		}
 		case 2:
 			playVoiceline();
 			break;
@@ -388,13 +409,11 @@ function releasedMouse() {
 function setMouse(event) {
 	let ax = event.clientX;
 	let ay = event.clientY;
-	let mx = 1;
 	if (flipped) {
-		mx = -1;
 		ax = canvas.width - ax;
 	}
 
-	return { x: ax, y: ay, m: mx }
+	return { x: ax, y: ay }
 }
 
 function init() {
@@ -407,11 +426,31 @@ function init() {
 			if (props.alignmentfliph) flipped = props.alignmentfliph.value;
 			if (props.scale) {
 				customScale = props.scale.value;
+				document.documentElement.style.setProperty('--wallpaper-scale', customScale);
 				resize();
 			}
 			if (props.targetfps) targetFps = props.targetfps.value;
 
 			if (props.introanimation) introAnimation = props.introanimation.value;
+			if (props.introloop) {
+				introLoop = props.introloop.value;
+				if (introLoop && spineData) {
+					spineData.state.clearTrack(0);
+					let entry = spineData.state.setAnimation(0, 'Start_Idle_01', false);
+					spineData.state.addAnimation(0, 'Idle_01', true, 0);
+					setupIntroCompleteListener(entry);
+				} else if (!introLoop && introLoopTimer) {
+					clearTimeout(introLoopTimer);
+					introLoopTimer = null;
+					if (spineData) {
+						spineData.state.clearTrack(0);
+						spineData.state.setAnimation(0, 'Idle_01', true);
+					}
+				}
+			}
+			if (props.introloopdelay) {
+				introLoopDelay = props.introloopdelay.value;
+			}
 
 			if (props.mousetracking) mouseOptions.mousetracking = props.mousetracking.value;
 			if (props.headpatting) mouseOptions.headpatting = props.headpatting.value;
@@ -423,9 +462,8 @@ function init() {
 			if (props.drawHitboxes) mouseOptions.drawHitboxes = props.drawHitboxes.value;
 
 			// 监听模型分辨率设置
-			if (props.modelresolution) {
-				modelResolution = props.modelresolution.value;
-				// 重新加载模型
+			if (props.modelresolution) modelResolution = props.modelresolution.value;
+			if (assetManager && typeof introAnimation !== 'undefined' && !modelFrame && loadingResolution !== modelResolution) {
 				reloadModel();
 			}
 
@@ -463,6 +501,8 @@ function init() {
 	textbox = document.getElementById('textbox');
 
 	canvas = document.getElementById('canvas');
+	canvas.addEventListener('mouseleave', releaseHeadpatOnExit);
+	window.addEventListener('blur', releaseHeadpatOnExit);
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
 
@@ -484,11 +524,20 @@ function init() {
 	skeletonRenderer = new spine.SkeletonRenderer(gl);
 	assetManager = new spine.AssetManager(gl);
 
-	// Load assets for use.
-	assetManager.loadBinary(BINARY_PATH);
-	assetManager.loadTextureAtlas(ATLAS_PATH);
+	initialLoadTimer = setTimeout(() => {
+		if (typeof introAnimation === 'undefined') introAnimation = true;
+		if (loadingResolution === undefined && !modelFrame) reloadModel();
+	}, 350);
 
-	requestAnimationFrame(load);
+	window.addEventListener('pagehide', event => {
+		if (event.persisted) return;
+		canvas.style.visibility = 'hidden';
+		clearTimeout(initialLoadTimer);
+		cancelAnimationFrame(modelFrame);
+		cancelAnimationFrame(renderFrame);
+		clearTimeout(renderTimer);
+		gl.getExtension('WEBGL_lose_context')?.loseContext();
+	});
 }
 
 let introAudioIsPlaying = false;
@@ -496,8 +545,41 @@ let introAudioTracks = [];
 let introTimeouts = [];
 let voicelineTimeouts = [];
 
+// Function to restart the intro animation (called by interval timer)
+function restartIntroAnimation() {
+	if (spineData && spineData.state) {
+		spineData.state.clearTrack(0);
+		let entry = spineData.state.setAnimation(0, 'Start_Idle_01', false);
+		spineData.state.addAnimation(0, 'Idle_01', true, 0);
+		setupIntroCompleteListener(entry);
+	}
+}
+
+function setupIntroCompleteListener(entry) {
+	if (!entry) return;
+	entry.listener = {
+		complete: function(trackEntry) {
+			if (trackEntry.animation.name === 'Start_Idle_01' && introLoop) {
+				if (introLoopTimer) clearTimeout(introLoopTimer);
+				introLoopTimer = setTimeout(restartIntroAnimation, introLoopDelay * 1000);
+			}
+		}
+	};
+}
+
 // Function to reload the model with a new resolution
 function reloadModel() {
+	if (!assetManager || modelFrame) return;
+	if (mouseSelect === 1 || headpatCooldown) {
+		if (mouseSelect === 1) mouseSelect = -1;
+		acceptingClick = false;
+	}
+	clearTimeout(headpatCooldown);
+	headpatCooldown = 0;
+	headpatOrigin = null;
+	headpatTarget.set(0, 0);
+	headpatOffset.set(0, 0);
+
 	// Stop the current BGM if it's playing
 	if (bgm) {
 		bgm.pause();
@@ -532,28 +614,46 @@ function reloadModel() {
 	// Clear all voiceline timeouts
 	voicelineTimeouts.forEach(timeout => clearTimeout(timeout));
 	voicelineTimeouts = [];
-	
+
+	// Clear intro loop timer
+	if (introLoopTimer) {
+		clearTimeout(introLoopTimer);
+		introLoopTimer = null;
+	}
+
 	// Hide dialog box
 	if (textbox) {
 		textbox.style.opacity = 0;
 	}
 	
-	// Generate new paths based on the selected resolution
-	const newBinaryPath = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.skel`) : `../assets/${modelResolution}/${CHARACTER}_home.skel`;
-	const newAtlasPath = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.atlas`) : `../assets/${modelResolution}/${CHARACTER}_home.atlas`;
-	
-	// Clear the existing assets
-	assetManager.removeAll();
-	
-	// Load new assets
-	assetManager.loadBinary(newBinaryPath);
-	assetManager.loadTextureAtlas(newAtlasPath);
-	
-	// Clear the current skeleton data to prevent rendering issues during loading
+	canvas.style.visibility = 'hidden';
+	cancelAnimationFrame(renderFrame);
+	clearTimeout(renderTimer);
 	spineData = null;
-	
-	// Restart the loading process
-	requestAnimationFrame(load);
+	assetManager.removeAll();
+	loadingResolution = modelResolution;
+	const binaryPath = new URL(`assets/${modelResolution}/${CHARACTER}_home.skel`, document.baseURI).href;
+	const atlasPath = new URL(`assets/${modelResolution}/${CHARACTER}_home.atlas`, document.baseURI).href;
+	assetManager.loadBinary(binaryPath);
+	assetManager.loadTextureAtlas(atlasPath);
+	function waitForAssets() {
+		if (!assetManager.isLoadingComplete()) {
+			modelFrame = requestAnimationFrame(waitForAssets);
+			return;
+		}
+		modelFrame = 0;
+		if (loadingResolution !== modelResolution) {
+			reloadModel();
+			return;
+		}
+		if (assetManager.get(binaryPath) && assetManager.get(atlasPath)) {
+			load(binaryPath, atlasPath);
+		} else {
+			console.error('Model assets not found for resolution: ' + loadingResolution);
+			loadingResolution = undefined;
+		}
+	}
+	modelFrame = requestAnimationFrame(waitForAssets);
 }
 
 // CITATION: http://esotericsoftware.com/spine-api-reference#
@@ -562,8 +662,6 @@ function interactionLoad() {
 	// Touch_Point and Touch_Eye
 	TPoint = spineData.skeleton.findBone('Touch_Point');
 	TEye = spineData.skeleton.findBone('Touch_Eye');
-	PPointX = TPoint.x;
-	PPointY = TPoint.y;
 	EPointX = TEye.x;
 	EPointY = TEye.y;
 
@@ -580,7 +678,7 @@ function interactionLoad() {
 	});
 	moveaction = canvas.addEventListener('mousemove', function (event) {
 		let mouseData = setMouse(event);
-		movedMouse(mouseData.x, mouseData.y, (event.movementX * mouseData.m), event.movementY);
+		movedMouse(mouseData.x, mouseData.y);
 	});
 
 	if (!introAnimation) {
@@ -595,58 +693,50 @@ function interactionLoad() {
 	return 1;
 }
 
-function load() {
-	// Wait until the AssetManager has loaded all resources, then load the skeletons.
-	if (assetManager.isLoadingComplete() && typeof introAnimation !== 'undefined') {
-		// 根据当前分辨率动态生成路径
-		const dynamicBinaryPath = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.skel`) : `../assets/${modelResolution}/${CHARACTER}_home.skel`;
-		const dynamicAtlasPath = window.location.protocol === 'file:' ? location.href.replace('/index.html', `/assets/${modelResolution}/${CHARACTER}_home.atlas`) : `../assets/${modelResolution}/${CHARACTER}_home.atlas`;
-		
-		// Check if the assets exist before trying to load them
-		if (!assetManager.get(dynamicBinaryPath) || !assetManager.get(dynamicAtlasPath)) {
-			console.error('Model assets not found for resolution: ' + modelResolution);
-			requestAnimationFrame(load);
-			return;
-		}
-		
-		spineData = loadSpineData(dynamicBinaryPath, dynamicAtlasPath, false);
+function load(dynamicBinaryPath, dynamicAtlasPath) {
+	spineData = loadSpineData(dynamicBinaryPath, dynamicAtlasPath, false);
 
-		// User Option to skip Intro Animation
-		if (introAnimation) {
-			spineData.state.addAnimation(0, 'Start_Idle_01', false);
+	// User Option to skip Intro Animation
+	if (introAnimation) {
+		let entry = spineData.state.addAnimation(0, 'Start_Idle_01', false);
 
-			if (mouseOptions.voicelines) {
-				let track = new Audio(`./assets/audio/${CHARACTER}_memoriallobby_0.ogg`);
-				track.volume = volume;
-				setTimeout(function () {
-					track.play();
-				}, 11500);
-			}
+		if (introLoop) {
+			spineData.state.addAnimation(0, 'Idle_01', true, 0);
+			setupIntroCompleteListener(entry);
 		}
 
-		spineData.state.addAnimation(0, 'Idle_01', true, 0);
-
-		interactionLoad();
-		resize();
-
-		// Plays user-defined BGM (if set) only if it's not already playing
-		if (!bgm) {
-			bgm = new Audio(bgmfile);
-			bgm.volume = bgmvolume;
-			bgm.loop = true;
-			bgm.play();
-			bgm.addEventListener('ended', function () {
-				this.currentTime = 0;
-				this.play();
-			}, false);
+		if (mouseOptions.voicelines) {
+			let track = new Audio(`./assets/audio/${CHARACTER}_memoriallobby_0.ogg`);
+			track.volume = volume;
+			setTimeout(function () {
+				track.play();
+			}, 11500);
 		}
-
-		lastFrameTime = Date.now() / 1000;
-		// Call render every frame.
-		requestAnimationFrame(render);
-	} else {
-		requestAnimationFrame(load);
 	}
+
+	if (!introAnimation || !introLoop) {
+		spineData.state.addAnimation(0, 'Idle_01', true, 0);
+	}
+
+	interactionLoad();
+	resize();
+
+	// Plays user-defined BGM (if set) only if it's not already playing
+	if (!bgm) {
+		bgm = new Audio(bgmfile);
+		bgm.volume = bgmvolume;
+		bgm.loop = true;
+		bgm.play();
+		bgm.addEventListener('ended', function () {
+			this.currentTime = 0;
+			this.play();
+		}, false);
+	}
+
+	lastFrameTime = Date.now() / 1000;
+	// Call render every frame.
+	render();
+	canvas.style.visibility = 'visible';
 }
 
 function loadSpineData(binaryPath, atlasPath, premultipliedAlpha) {
@@ -700,7 +790,12 @@ function render() {
         let premultipliedAlpha = spineData.premultipliedAlpha;
         state.update(delta);
         state.apply(skeleton);
+        const pointX = TPoint.x;
+        const pointY = TPoint.y;
+        applyHeadpat(delta);
         skeleton.updateWorldTransform(spine.Physics.update);
+        TPoint.x = pointX;
+        TPoint.y = pointY;
 
         // Bind the shader and set the texture and model-view-projection matrix.
         shader.bind();
@@ -724,8 +819,8 @@ function render() {
 
     drawHitboxes();
 
-    setTimeout(() => {
-        requestAnimationFrame(render);
+    renderTimer = setTimeout(() => {
+        renderFrame = requestAnimationFrame(render);
     }, delay);
 }
 

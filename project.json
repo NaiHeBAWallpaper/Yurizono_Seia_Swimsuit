@@ -6,13 +6,30 @@
 	{
 		"properties" : 
 		{
+			"bapointer" : 
+			{
+				"index": 19,
+				"order": 119,
+				"text": "BA Pointer Style",
+				"type": "bool",
+				"value": true
+			},
+			"bapersistenttrail" : 
+			{
+				"condition": "fireworks.value == true && bapointer.value == true",
+				"index": 20,
+				"order": 120,
+				"text": "BA Pointer Persistent Trail",
+				"type": "bool",
+				"value": false
+			},
 			"bgmvolume" : 
 			{
 				"fraction" : false,
-				"index" : 13,
+				"index" : 15,
 				"max" : 100,
 				"min" : 0,
-				"order" : 113,
+				"order" : 115,
 				"text" : "BGM Volume",
 				"type" : "slider",
 				"value" : 20
@@ -20,7 +37,7 @@
 			"dialoglanguage" : 
 			{
 				"condition" : "mouseactions.value == true && voicelines.value == true && showdialog.value == true",
-				"index" : 8,
+				"index" : 10,
 				"options" : 
 				[
 					{
@@ -36,7 +53,7 @@
 						"value" : "Chinese"
 					}
 				],
-				"order" : 108,
+				"order" : 110,
 				"text" : "Dialog Language",
 				"type" : "combo",
 				"value" : "Japanese"
@@ -45,10 +62,10 @@
 			{
 				"condition" : "mouseactions.value == true && voicelines.value == true && showdialog.value == true",
 				"fraction" : true,
-				"index" : 9,
+				"index" : 11,
 				"max" : 100,
 				"min" : 0,
-				"order" : 109,
+				"order" : 111,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "DialogX",
@@ -59,10 +76,10 @@
 			{
 				"condition" : "mouseactions.value == true && voicelines.value == true && showdialog.value == true",
 				"fraction" : true,
-				"index" : 10,
+				"index" : 12,
 				"max" : 100,
 				"min" : 0,
-				"order" : 110,
+				"order" : 112,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "DialogY",
@@ -72,24 +89,24 @@
 			"drawHitboxes" : 
 			{
 				"condition" : "mouseactions.value == true",
-				"index" : 16,
-				"order" : 116,
+				"index" : 18,
+				"order" : 118,
 				"text" : "Interactive Area",
 				"type" : "bool",
 				"value" : false
 			},
 			"fireworks" : 
 			{
-				"index" : 14,
-				"order" : 114,
-				"text" : "Fireworks Effect",
+				"index" : 16,
+				"order" : 116,
+				"text" : "Click Effects",
 				"type" : "bool",
 				"value" : true
 			},
 			"fireworkstheme" : 
 			{
-				"condition" : "fireworks.value == true",
-				"index" : 15,
+				"condition" : "fireworks.value == true && bapointer.value == false",
+				"index" : 17,
 				"options" : 
 				[
 					{
@@ -105,7 +122,7 @@
 						"value" : "system"
 					}
 				],
-				"order" : 115,
+				"order" : 117,
 				"text" : "Fireworks Theme",
 				"type" : "combo",
 				"value" : "system"
@@ -113,8 +130,8 @@
 			"headpatting" : 
 			{
 				"condition" : "mouseactions.value == true",
-				"index" : 11,
-				"order" : 111,
+				"index" : 13,
+				"order" : 113,
 				"text" : "Headpatting",
 				"type" : "bool",
 				"value" : true
@@ -126,6 +143,28 @@
 				"text" : "Intro Animation",
 				"type" : "bool",
 				"value" : true
+			},
+			"introloop" : 
+			{
+				"condition" : "introanimation.value == true",
+				"index" : 4,
+				"order" : 104,
+				"text" : "Loop Intro Animation",
+				"type" : "bool",
+				"value" : false
+			},
+			"introloopdelay" : 
+			{
+				"condition" : "introanimation.value == true && introloop.value == true",
+				"fraction" : false,
+				"index" : 5,
+				"max" : 600,
+				"min" : 0,
+				"order" : 105,
+				"step" : 10,
+				"text" : "Loop Restart Delay (s)",
+				"type" : "slider",
+				"value" : 60
 			},
 			"modelresolution" : 
 			{
@@ -152,8 +191,8 @@
 			},
 			"mouseactions" : 
 			{
-				"index" : 4,
-				"order" : 104,
+				"index" : 7,
+				"order" : 107,
 				"text" : "Show Mouse Actions",
 				"type" : "bool",
 				"value" : false
@@ -161,8 +200,8 @@
 			"mousetracking" : 
 			{
 				"condition" : "mouseactions.value == true",
-				"index" : 12,
-				"order" : 112,
+				"index" : 14,
+				"order" : 114,
 				"text" : "Mouse Tracking",
 				"type" : "bool",
 				"value" : true
@@ -190,8 +229,8 @@
 			"showdialog" : 
 			{
 				"condition" : "mouseactions.value == true && voicelines.value == true",
-				"index" : 7,
-				"order" : 107,
+				"index" : 9,
+				"order" : 109,
 				"text" : "Show Dialog",
 				"type" : "bool",
 				"value" : true
@@ -210,8 +249,8 @@
 			"voicelines" : 
 			{
 				"condition" : "mouseactions.value == true",
-				"index" : 5,
-				"order" : 105,
+				"index" : 6,
+				"order" : 106,
 				"text" : "Voicelines",
 				"type" : "bool",
 				"value" : true
@@ -220,10 +259,10 @@
 			{
 				"condition" : "mouseactions.value == true && voicelines.value == true",
 				"fraction" : true,
-				"index" : 6,
+				"index" : 8,
 				"max" : 100,
 				"min" : 0,
-				"order" : 106,
+				"order" : 108,
 				"precision" : 2,
 				"step" : 0.1,
 				"text" : "Volume",
@@ -240,7 +279,7 @@
 	"tags" : [ "Anime" ],
 	"title" : "Blue Archive | Yurizono Seia (Swimsuit)",
 	"type" : "Web",
-	"version" : 8,
+	"version" : 11,
 	"visibility" : "public",
 	"workshopid" : "3531814034",
 	"workshopurl" : "steam://url/CommunityFilePage/3531814034"
