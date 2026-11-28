@@ -45,7 +45,8 @@ const subtitleLocales = {
 	Chinese: 'zh-Hans',
 	TraditionalChinese: 'zh-Hant',
 	Japanese: 'ja',
-	Korean: 'ko'
+	Korean: 'ko',
+	Thai: 'th'
 };
 
 const CHARACTER = 'CH0295';
@@ -63,12 +64,12 @@ const AUDIO_DETAIL = [
 				"邪魔するものはなく……この世界は私たちだけのものだ。"
 			],
 			English: [
-				"What a nice breeze... Indeed, it somehow feels more refreshing here.",
-				"There's no one here to bother us... This world belongs only to the two of us."
+				"The breeze feels refreshing out here.",
+				"There are no cars around, either... This is nice."
 			],
 			Chinese: [
-				"真是舒爽的风啊。果然，莫名觉得心旷神怡呢。",
-				"没有碍事的人打扰……此刻的世界只属于我们。"
+				"到了这里，感觉风都变凉爽了呢。",
+				"周围也没有别的车……真不错。"
 			],
 			TraditionalChinese: [
 				"來到這裡之後，連風也變舒適了呢。",
@@ -77,7 +78,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"여기까지 오니 바람도 선선해지는군요.",
 				"다른 차도 없고……. 좋네요."
-			]
+			],
+			Thai: ["พอมาถึงที่นี่ ลมก็พัดเย็นขึ้นนะคะ","รถคันอื่นก็ไม่มี... ดีจังเลยค่ะ"]
 		}
 	},
 	{
@@ -87,21 +89,22 @@ const AUDIO_DETAIL = [
 				"その表情は……景色に驚いているのかい？それとも……私の誘いが意外だったのかな？"
 			],
 			English: [
-				"The view from the passenger seat is beautiful, isn't it?",
-				"That expression on your face... Are you surprised by the view? Or perhaps... did you find my invitation unexpected?"
+				"How's the drive? Were you surprised?",
+				"It must've been sudden, and unexpected."
 			],
 			Chinese: [
-				"副驾驶座的风景可还称心？",
-				"你这样的表情……是惊叹于窗外景致？还是说……没料到我会邀你同行？"
+				"兜风的感觉怎么样？",
+				"是不是吓到你了？毕竟事出突然，你应该很意外吧。"
 			],
 			TraditionalChinese: [
 				"覺得這趟兜風怎麼樣？嚇到你了嗎？",
-				"你這樣的表情……是驚歎於窗外景緻？還是說……沒料到我會邀你同行？"
+				"畢竟是個突然的邀請，你想必也沒預料到吧？"
 			],
 			Korean: [
 				"드라이브는 어떠실까요? 많이 놀라셨나요?",
-				"얼굴의 표정은... 그 시선에 놀라지 않나요?"
-			]
+				"갑작스럽기도 하고, 예상외이기도 하셨겠죠."
+			],
+			Thai: ["นั่งรถเล่นเป็นยังไงบ้างคะ? ตกใจมากหรือเปล่าคะ?","คงรู้สึกทั้งกะทันหัน และเกินคาดด้วยสินะคะ"]
 		}
 	},
 	{
@@ -111,21 +114,22 @@ const AUDIO_DETAIL = [
 				"大それた理由を求められても困ってしまうな。気の向くままに……それだけのことさ。"
 			],
 			English: [
-				"Either way, just seeing that look on your face is enough to make me content. It makes inviting you out completely worth it, don't you think?",
-				"I don't know what the big reason is, but I just do what I feel like doing... that's all."
+				"Looking at your expression... I'm glad we came here.",
+				"There's no special meaning to it. I just wanted to try it at some point."
 			],
 			Chinese: [
-				"无论怎么想都无妨，能看到你这般神情我已经心满意足了。看来这番邀约确实值得呢。",
-				"若非要追问缘由，反倒让我为难了……不过是随心所欲罢了。"
+				"能见到你这样的表情……看来这趟是来对了。",
+				"其实，来这里也没有什么特别的理由。只是想如此尝试一次罢了。"
 			],
 			TraditionalChinese: [
-				"無論怎麼想都無妨，能看到你這般神情我已經心滿意足了。看來這番邀約確實值得呢。",
-				"若非要追問緣由，反倒讓我為難了……不過是隨心所欲罷了。"
+				"看見那個表情……我覺得有邀請你真是太好了。",
+				"其實並沒有什麼特別的理由。只是想嘗試一次而已。"
 			],
 			Korean: [
-				"어쨌든 네 얼굴에 그런 표정을 보는 것만으로도 만족할 수 있어",
-				"그 큰 이유가 뭔지 모르겠지만 내가 하고 싶은 일을 하는 것 뿐이야"
-			]
+				"그 표정을 보니……. 오길 잘했다는 생각이 드네요.",
+				"사실 별다른 이유는 없어요. 그저 한 번쯤 해보고 싶었을 뿐."
+			],
+			Thai: ["ดูจากสีหน้าแล้ว... ฉันว่าฉันทำได้ดีเลยค่ะ ที่มาที่นี่","ที่จริงฉันไม่มีเหตุผล อะไรพิเศษหรอกค่ะ ก็แค่อยากลองทำ ดูสักครั้งน่ะค่ะ"]
 		}
 	},
 	{
@@ -135,12 +139,12 @@ const AUDIO_DETAIL = [
 				"ふむ……逃避行？"
 			],
 			English: [
-				"What was the word for this again...",
-				"Hmm...An escape trip?"
+				"What do you call this again...?",
+				"...Kidnapping?"
 			],
 			Chinese: [
-				"该称这叫作什么呢……",
-				"嗯……私奔吗？"
+				"这种行为，该叫什么呢……？",
+				"……绑架？"
 			],
 			TraditionalChinese: [
 				"這種行為，該怎麼形容來著……？",
@@ -149,7 +153,8 @@ const AUDIO_DETAIL = [
 			Korean: [
 				"이런 걸 뭐라고 하죠……?",
 				"……납치?"
-			]
+			],
+			Thai: ["การทำแบบนี้ เรียกว่าอะไรเหรอคะ...?","ลักพาตัวหรือเปล่านะ...?"]
 		}
 	},
 	{
@@ -160,14 +165,14 @@ const AUDIO_DETAIL = [
 				"君を送り返すまでは、この「戯れ」に付き合ってもらうとしようか。"
 			],
 			English: [
-				"Hehe...just kidding.",
-				"But... it'll probably be a while yet.",
-				`Until I send you back, I guess you'll have to put up with this "play."`
+				"Heh... I'm just joking.",
+				"But, still... Yeah.",
+				"Until I send you back home, let's say I'm not joking."
 			],
 			Chinese: [
-				"呵呵……玩笑罢了。",
-				"不过在那之前......",
-				"就请容我继续这场小小的‘游戏’吧……至少，在送你回去之前。"
+				"呵呵……开个玩笑。",
+				"不过，至少现在……嗯。",
+				"在送老师回家之前，就先当作是这样吧。"
 			],
 			TraditionalChinese: [
 				"呵呵……開玩笑的。",
@@ -178,7 +183,8 @@ const AUDIO_DETAIL = [
 				"후후……. 농담이에요.",
 				"그렇지만 아직은……. 그래요.",
 				"선생님을 집으로 돌려보내 드리기 전까진, 농담이 아닌 걸로 하죠."
-			]
+			],
+			Thai: ["ฮุฮุ... ล้อเล่นค่ะ","แต่ถึงยังไงตอนนี้... ใช่ค่ะ","จนกว่าฉันจะยอม ปล่อยคุณครูกลับบ้าน คิดว่ามันไม่ใช่เรื่องล้อเล่นแล้วกันค่ะ"]
 		}
 	}
 ];
@@ -290,7 +296,7 @@ function playVoiceline() {
 			track.play().catch(finish);
 
 			if (dialogBox) {
-				textbox.textContent = dialog[window.selectedLanguage][index];
+				textbox.textContent = getSubtitleText(dialog, window.selectedLanguage, index);
 				textbox.style.opacity = 1;
 			}
 		},
@@ -460,6 +466,16 @@ function setMouse(event) {
 	return { x: ax - canvas.width * positionX, y: ay - canvas.height * positionY };
 }
 
+function getSubtitleText(dialog, language, index) {
+	let text = dialog?.[language]?.[index];
+	if (text == null && language === 'Thai') {
+		language = 'English';
+		text = dialog?.[language]?.[index];
+	}
+	textbox.lang = subtitleLocales[language];
+	return text ?? "";
+}
+
 function updateSubtitleLanguage() {
 	let language = subtitleLanguagePreference;
 	if (language === 'auto') {
@@ -473,6 +489,8 @@ function updateSubtitleLanguage() {
 			language = 'Japanese';
 		} else if (primary === 'ko' || primary === 'korean' || primary === 'koreana') {
 			language = 'Korean';
+		} else if (primary === 'th' || primary === 'thai') {
+			language = 'Thai';
 		} else {
 			language = 'English';
 		}
@@ -482,7 +500,7 @@ function updateSubtitleLanguage() {
 	window.selectedLanguage = language;
 	textbox.lang = subtitleLocales[language];
 	const clip = currentTracks.at(-1);
-	if (dialogBox && clip) textbox.textContent = clip.dialog[language][clip.index];
+	if (dialogBox && clip) textbox.textContent = getSubtitleText(clip.dialog, language, clip.index);
 }
 
 function init() {
